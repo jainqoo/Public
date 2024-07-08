@@ -1,29 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rive Animation Example</title>
-  <script src="https://unpkg.com/@rive-app/canvas@0.7.22"></script>
-</head>
-<body style="margin: 0; overflow: hidden;">
-  <canvas id="canvas" style="width: 100vw; height: 100vh;"></canvas>
-  
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      const canvas = document.getElementById('canvas');
-      const rive = new Rive({
-        src: 'togglewords.riv', // 상대 경로 사용
-        canvas: canvas,
+<html>
+  <head>
+    <title>Rive Hello World</title>
+  </head>
+  <body>
+    <canvas id="canvas" width="500" height="500"></canvas>
+
+    <script src="https://unpkg.com/@rive-app/canvas@2.17.3"></script>
+    <script>
+      const r = new rive.Rive({
+        src: "https://cdn.rive.app/animations/vehicles.riv",
+        canvas: document.getElementById("canvas"),
         autoplay: true,
+        stateMachines: "bumpy",
         onLoad: () => {
-          console.log('Rive animation loaded successfully');
+          r.resizeDrawingSurfaceToCanvas();
         },
-        onError: (error) => {
-          console.error('Error loading Rive animation:', error);
-        }
       });
-    });
-  </script>
-</body>
+    </script>
+  </body>
 </html>
