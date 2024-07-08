@@ -13,49 +13,11 @@
     document.addEventListener("DOMContentLoaded", function() {
       const canvas = document.getElementById('canvas');
       const rive = new Rive({
-        src: 'https://jainqoo.github.io/Public/gyrosensortest.riv',
+        src: 'togglewords.riv', // 상대 경로 사용
         canvas: canvas,
         autoplay: true,
         onLoad: () => {
           console.log('Rive animation loaded successfully');
-          const inputs = rive.stateMachineInputs("State Machine 1");
-          if (!inputs) {
-            console.error('State Machine Inputs not found');
-            return;
-          }
-          const gyroX = inputs.find(input => input.name === "GyroSensor.X");
-          const gyroY = inputs.find(input => input.name === "GyroSensor.Y");
-          if (!gyroX || !gyroY) {
-            console.error('GyroSensor inputs not found');
-            return;
-          }
-
-          function handleOrientation(event) {
-            const gamma = event.gamma; // left to right, range: -90 to 90
-            const beta = event.beta; // front to back, range: -180 to 180
-
-            // Map gamma to GyroSensor.X range
-            const gyroSensorX = (gamma / 90) * 100; // -90 to 90 maps to -100 to 100
-            // Map beta to GyroSensor.Y range
-            const gyroSensorY = (beta / 180) * 200 - 100; // -180 to 180 maps to -100 to 100
-
-            gyroX.value = gyroSensorX;
-            gyroY.value = gyroSensorY;
-          }
-
-          if (typeof DeviceMotionEvent.requestPermission === 'function') {
-            DeviceMotionEvent.requestPermission()
-              .then(permissionState => {
-                if (permissionState === 'granted') {
-                  window.addEventListener('deviceorientation', handleOrientation);
-                } else {
-                  console.error('Permission to access device orientation was denied.');
-                }
-              })
-              .catch(console.error);
-          } else {
-            window.addEventListener('deviceorientation', handleOrientation);
-          }
         },
         onError: (error) => {
           console.error('Error loading Rive animation:', error);
