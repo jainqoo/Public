@@ -1,41 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rive Animation Example</title>
-  <script src="https://unpkg.com/@rive-app/canvas@0.7.22"></script>
-  <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-    }
-    #canvas {
-      width: 100vw;
-      height: 100vh;
-    }
-  </style>
-</head>
-<body>
-  <canvas id="canvas"></canvas>
+<iframe id="riveCanvas" style="border:0; width:100%; height:100%;"></iframe>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      console.log('DOM fully loaded and parsed');
+<script src="https://unpkg.com/@rive-app/canvas@0.7.22"></script>
+<script>
+  const riveCanvas = document.getElementById('riveCanvas').contentWindow.document;
 
-      const canvas = document.getElementById('canvas');
-      const rive = new Rive({
-        src: 'https://jainqoo.github.io/Public/gyrosensortest.riv',
-        canvas: canvas,
-        autoplay: true,
-        onLoad: () => {
-          console.log('Rive animation loaded successfully');
-        },
-        onError: (error) => {
-          console.error('Error loading Rive animation:', error);
-        }
-      });
-    });
-  </script>
-</body>
-</html>
+  riveCanvas.open();
+  riveCanvas.write(`
+    <html>
+    <body style="margin:0;">
+      <canvas id="canvas" width="100%" height="100%"></canvas>
+      <script src="https://unpkg.com/@rive-app/canvas@0.7.22"></script>
+      <script>
+        const canvas = document.getElementById('canvas');
+        const rive = new Rive({
+          src: 'gyrosensortest.riv',
+          canvas: canvas,
+          autoplay: true,
+        });
+
+        window.addEventListener('deviceorientation', (event) => {
+          const gamma = event.gamma;
+          const beta = event.beta;
+
+          // Parallax effect calculations (example values)
+          const xOffset = gamma * 0.5;
+          const yOffset = beta * 0.5;
+
+          rive.renderer.canvas.style.transform = \`translate(\${xOffset}px, \${yOffset}px)\`;
+        });
+      </script>
+    </body>
+    </html>
+  `);
+  riveCanvas.close();
+</script>
