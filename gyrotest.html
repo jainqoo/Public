@@ -5,10 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rive Animation Example</title>
   <script src="https://unpkg.com/@rive-app/canvas@0.7.22"></script>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+    #canvas {
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
 </head>
-<body style="margin: 0; overflow: hidden;">
-  <canvas id="canvas" style="width: 100vw; height: 100vh;"></canvas>
-  
+<body>
+  <canvas id="canvas"></canvas>
+
   <script>
     document.addEventListener("DOMContentLoaded", function() {
       const canvas = document.getElementById('canvas');
@@ -30,7 +40,23 @@
             return;
           }
 
-          window.addEventListener('deviceorientation', (event) => {
+          // Request device orientation permission on iOS
+          if (typeof DeviceMotionEvent.requestPermission === 'function') {
+            DeviceMotionEvent.requestPermission()
+              .then(permissionState => {
+                if (permissionState === 'granted') {
+                  window.addEventListener('deviceorientation', handleOrientation);
+                } else {
+                  console.error('Permission to access device orientation was denied.');
+                }
+              })
+              .catch(console.error);
+          } else {
+            // Non-iOS browsers
+            window.addEventListener('deviceorientation', handleOrientation);
+          }
+
+          function handleOrientation(event) {
             const gamma = event.gamma; // left to right, range: -90 to 90
             const beta = event.beta; // front to back, range: -180 to 180
 
@@ -41,7 +67,7 @@
 
             gyroX.value = gyroSensorX;
             gyroY.value = gyroSensorY;
-          });
+          }
         },
         onError: (error) => {
           console.error('Error loading Rive animation:', error);
