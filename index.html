@@ -53,7 +53,13 @@
 
                         gyroX.value = gyroSensorX;
                         gyroY.value = gyroSensorY;
+
+                        // Manually advance the state machine
+                        riveInstance.advance(0);
                     });
+
+                    // Add an initial call to advance the state machine
+                    riveInstance.advance(0);
                 },
                 onError: (error) => {
                     console.error('Error loading Rive animation:', error);
