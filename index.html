@@ -14,11 +14,13 @@
             position: relative;
             width: 100vw; /* Full width */
             height: 100vh; /* Full height */
+            overflow: hidden; /* Prevent children from overflowing */
         }
         #canvas {
             width: 100%;
             height: 100%;
             display: block;
+            object-fit: contain; /* Maintain aspect ratio */
         }
         #permissionButton {
             position: absolute;
