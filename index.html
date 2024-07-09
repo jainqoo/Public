@@ -27,6 +27,17 @@
             border-radius: 5px;
             font-size: 16px;
         }
+        #permissionButton {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -36,11 +47,14 @@
         <div id="status">Gamma: 0, Beta: 0</div>
     </div>
 
+    <button id="permissionButton">Request Accelerometer Permission</button>
+
     <script src="https://unpkg.com/@rive-app/canvas@2.17.3"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const canvas = document.getElementById('canvas');
             const statusDiv = document.getElementById('status');
+            const permissionButton = document.getElementById('permissionButton');
             const riveInstance = new rive.Rive({
                 src: "gyrosensortest.riv",
                 canvas: canvas,
@@ -62,24 +76,56 @@
 
                     console.log('GyroSensor inputs found:', gyroX, gyroY);
 
-                    window.addEventListener('deviceorientation', (event) => {
-                        const gamma = event.gamma; // left to right, range: -90 to 90
-                        const beta = event.beta; // front to back, range: -180 to 180
+                    // Function to handle accelerometer permission request
+                    function requestAccelerometerPermission() {
+                        if (typeof DeviceMotionEvent.requestPermission === 'function') {
+                            DeviceMotionEvent.requestPermission()
+                                .then(permissionState => {
+                                    if (permissionState === 'granted') {
+                                        console.log('Accelerometer permission granted');
+                                        // Add event listener after permission is granted
+                                        startDeviceOrientationListener();
+                                    } else {
+                                        console.error('Accelerometer permission denied');
+                                        statusDiv.textContent = 'Accelerometer permission denied';
+                                    }
+                                })
+                                .catch(console.error);
+                        } else {
+                            console.log('Device does not support accelerometer permission request');
+                            statusDiv.textContent = 'Accelerometer permission not supported';
+                        }
+                    }
 
-                        console.log(`Gamma: ${gamma}, Beta: ${beta}`);
-                        statusDiv.textContent = `Gamma: ${gamma.toFixed(2)}, Beta: ${beta.toFixed(2)}`;
-
-                        // Map gamma to GyroSensor.X range (-90 to 90)
-                        const gyroSensorX = gamma; // Direct mapping
-                        // Map beta to GyroSensor.Y range (-90 to 90)
-                        const gyroSensorY = (beta / 180) * 90; // -180 to 180 maps to -90 to 90
-
-                        gyroX.value = gyroSensorX;
-                        gyroY.value = gyroSensorY;
-
-                        // Manually advance the state machine
-                        riveInstance.advance(0);
+                    // Event listener for permission button click
+                    permissionButton.addEventListener('click', () => {
+                        requestAccelerometerPermission();
                     });
+
+                    // Function to start listening to device orientation
+                    function startDeviceOrientationListener() {
+                        window.addEventListener('deviceorientation', (event) => {
+                            const gamma = event.gamma; // left to right, range: -90 to 90
+                            const beta = event.beta; // front to back, range: -180 to 180
+
+                            console.log(`Gamma: ${gamma}, Beta: ${beta}`);
+                            statusDiv.textContent = `Gamma: ${gamma.toFixed(2)}, Beta: ${beta.toFixed(2)}`;
+
+                            // Map gamma to GyroSensor.X range (-90 to 90)
+                            const gyroSensorX = gamma; // Direct mapping
+                            // Map beta to GyroSensor.Y range (-90 to 90)
+                            const gyroSensorY = (beta / 180) * 90; // -180 to 180 maps to -90 to 90
+
+                            gyroX.value = gyroSensorX;
+                            gyroY.value = gyroSensorY;
+
+                            // Manually advance the state machine
+                            riveInstance.advance(0);
+                        });
+                    }
+
+                    // Start listening to device orientation initially
+                    startDeviceOrientationListener();
 
                     // Add an initial call to advance the state machine
                     riveInstance.advance(0);
