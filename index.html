@@ -1,29 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rive Animation Example</title>
-  <script src="https://unpkg.com/@rive-app/canvas@0.7.22"></script>
+    <meta charset="UTF-8" />
+    <title>rive test</title>
 </head>
-<body style="margin: 0; overflow: hidden;">
-  <canvas id="canvas" style="width: 100vw; height: 100vh;"></canvas>
-  
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      const canvas = document.getElementById('canvas');
-      const rive = new Rive({
-        src: 'togglewords.riv', // Assuming the .riv file is in the same directory
-        canvas: canvas,
+<body>
+
+    <div class="container">
+        <canvas id="canvas" width="375" height="812"></canvas>
+    </div>
+
+
+    <script src="https://unpkg.com/@rive-app/canvas@2.17.3"></script>
+    <script>
+
+
+        const r = new rive.Rive({
+        src: "gyrosensortest.riv",
+        canvas: document.getElementById("canvas"),
         autoplay: true,
+        stateMachines: "State Machine 1",
         onLoad: () => {
-          console.log('Rive animation loaded successfully');
+          r.resizeDrawingSurfaceToCanvas();
         },
-        onError: (error) => {
-          console.error('Error loading Rive animation:', error);
-        }
       });
-    });
-  </script>
+
+
+    </script>
+
 </body>
 </html>
