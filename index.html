@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8" />
-    <title>rive test</title>
+    <title>Rive Test</title>
 </head>
 <body>
 
@@ -10,22 +10,47 @@
         <canvas id="canvas" width="375" height="812"></canvas>
     </div>
 
-
     <script src="https://unpkg.com/@rive-app/canvas@2.17.3"></script>
     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const canvas = document.getElementById('canvas');
+            const riveInstance = new rive.Rive({
+                src: "gyrosensortest.riv",
+                canvas: canvas,
+                autoplay: true,
+                stateMachines: "State Machine 1",
+                onLoad: () => {
+                    riveInstance.resizeDrawingSurfaceToCanvas();
+                    const inputs = riveInstance.stateMachineInputs("State Machine 1");
+                    if (!inputs) {
+                        console.error('State Machine Inputs not found');
+                        return;
+                    }
+                    const gyroX = inputs.find(input => input.name === "GyroSensor.X");
+                    const gyroY = inputs.find(input => input.name === "GyroSensor.Y");
+                    if (!gyroX || !gyroY) {
+                        console.error('GyroSensor inputs not found');
+                        return;
+                    }
 
+                    window.addEventListener('deviceorientation', (event) => {
+                        const gamma = event.gamma; // left to right, range: -90 to 90
+                        const beta = event.beta; // front to back, range: -180 to 180
 
-        const r = new rive.Rive({
-        src: "gyrosensortest.riv",
-        canvas: document.getElementById("canvas"),
-        autoplay: true,
-        stateMachines: "State Machine 1",
-        onLoad: () => {
-          r.resizeDrawingSurfaceToCanvas();
-        },
-      });
+                        // Map gamma to GyroSensor.X range
+                        const gyroSensorX = (gamma / 90) * 100; // -90 to 90 maps to -100 to 100
+                        // Map beta to GyroSensor.Y range
+                        const gyroSensorY = (beta / 180) * 200 - 100; // -180 to 180 maps to -100 to 100
 
-
+                        gyroX.value = gyroSensorX;
+                        gyroY.value = gyroSensorY;
+                    });
+                },
+                onError: (error) => {
+                    console.error('Error loading Rive animation:', error);
+                }
+            });
+        });
     </script>
 
 </body>
