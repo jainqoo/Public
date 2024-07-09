@@ -9,11 +9,13 @@
     <div class="container">
         <canvas id="canvas" width="375" height="812"></canvas>
     </div>
+    <div id="status">Waiting for device orientation events...</div>
 
     <script src="https://unpkg.com/@rive-app/canvas@2.17.3"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const canvas = document.getElementById('canvas');
+            const statusDiv = document.getElementById('status');
             const riveInstance = new rive.Rive({
                 src: "gyrosensortest.riv",
                 canvas: canvas,
@@ -33,6 +35,9 @@
                         return;
                     }
 
+                    console.log('GyroSensor inputs found:', gyroX, gyroY);
+                    statusDiv.innerHTML = "GyroSensor inputs found.";
+
                     window.addEventListener('deviceorientation', (event) => {
                         const gamma = event.gamma; // left to right, range: -90 to 90
                         const beta = event.beta; // front to back, range: -180 to 180
@@ -41,6 +46,10 @@
                         const gyroSensorX = gamma; // Direct mapping
                         // Map beta to GyroSensor.Y range (-90 to 90)
                         const gyroSensorY = (beta / 180) * 90; // -180 to 180 maps to -90 to 90
+
+                        console.log(`Gamma: ${gamma}, Beta: ${beta}`);
+                        console.log(`GyroSensorX: ${gyroSensorX}, GyroSensorY: ${gyroSensorY}`);
+                        statusDiv.innerHTML = `Gamma: ${gamma}, Beta: ${beta}`;
 
                         gyroX.value = gyroSensorX;
                         gyroY.value = gyroSensorY;
