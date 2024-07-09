@@ -37,10 +37,10 @@
                         const gamma = event.gamma; // left to right, range: -90 to 90
                         const beta = event.beta; // front to back, range: -180 to 180
 
-                        // Map gamma to GyroSensor.X range
-                        const gyroSensorX = (gamma / 90) * 100; // -90 to 90 maps to -100 to 100
-                        // Map beta to GyroSensor.Y range
-                        const gyroSensorY = (beta / 180) * 200 - 100; // -180 to 180 maps to -100 to 100
+                        // Map gamma to GyroSensor.X range (-90 to 90)
+                        const gyroSensorX = gamma; // Direct mapping
+                        // Map beta to GyroSensor.Y range (-90 to 90)
+                        const gyroSensorY = (beta / 180) * 90; // -180 to 180 maps to -90 to 90
 
                         gyroX.value = gyroSensorX;
                         gyroY.value = gyroSensorY;
